@@ -7,22 +7,23 @@ public class SantaCommunicator {
         this.numberOfDaysToRest = numberOfDaysToRest;
     }
 
-    public String composeMessage(String reindeerName, String currentLocation, int numbersOfDaysForComingBack, int numberOfDaysBeforeChristmas) {
-        var daysBeforeReturn = daysBeforeReturn(numbersOfDaysForComingBack, numberOfDaysBeforeChristmas);
+    public String composeMessage(ReindeerLocation reindeerLocation) {
+        DaysCalculator daysCalculator = new DaysCalculator(numberOfDaysToRest, reindeerLocation.numberOfDaysBeforeChristmas(), reindeerLocation.numbersOfDaysForComingBack());
 
-        return "Dear " + reindeerName + ", please return from " + currentLocation +
+        var daysBeforeReturn = daysCalculator.daysBeforeReturn();
+
+        return "Dear " + reindeerLocation.reindeerName() + ", please return from " + reindeerLocation.currentLocation() +
                 " in " + daysBeforeReturn + " day(s) to be ready and rest before Christmas.";
     }
 
-    public boolean isOverdue(String reindeerName, String currentLocation, int numbersOfDaysForComingBack, int numberOfDaysBeforeChristmas, Logger logger) {
-        if (daysBeforeReturn(numbersOfDaysForComingBack, numberOfDaysBeforeChristmas) <= 0) {
-            logger.log("Overdue for " + reindeerName + " located " + currentLocation + ".");
+    public boolean isOverdue(ReindeerLocation reindeerLocation, Logger logger) {
+        DaysCalculator daysCalculator = new DaysCalculator(numberOfDaysToRest, reindeerLocation.numberOfDaysBeforeChristmas(), reindeerLocation.numbersOfDaysForComingBack());
+        var daysBeforeReturn = daysCalculator.daysBeforeReturn();
+        if (daysBeforeReturn <= 0) {
+            logger.log("Overdue for " + reindeerLocation.reindeerName() + " located " + reindeerLocation.currentLocation() + ".");
             return true;
         }
         return false;
     }
 
-    private int daysBeforeReturn(int numbersOfDaysForComingBack, int numberOfDaysBeforeChristmas) {
-        return numberOfDaysBeforeChristmas - numbersOfDaysForComingBack - numberOfDaysToRest;
-    }
 }
